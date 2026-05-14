@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>間 · Interval Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+      background: #d6eaf5;
+      min-height: 100vh;
+      color: #2c2c2c;
+      overflow-x: hidden;
+    }
+
+    /* ── Cloud Background ── */
+    #clouds-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #clouds-bg svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── App Shell ── */
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 3.5rem 2.5rem 4rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 4.5rem;
+    }
+    .header-ma {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 5rem;
+      font-weight: 200;
+      color: #1a1a2e;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+    .header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 300;
+      letter-spacing: 0.6em;
+      text-transform: uppercase;
+      color: #4a4a5a;
+      margin-top: 0.7rem;
+    }
+    .header-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: #8a8a9a;
+      letter-spacing: 0.2em;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Project Cards — frameless, open layout ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 2.5rem;
+    }
+    .project-card {
+      cursor: pointer;
+      padding: 0.25rem 0;
+      transition: opacity 0.25s;
+      user-select: none;
+    }
+    .project-card:hover { opacity: 0.82; }
+    .project-card.is-active { opacity: 1; }
+
+    .project-kanji {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 3.8rem;
+      font-weight: 200;
+      color: #1a1a2e;
+      line-height: 1;
+      margin-bottom: 0.55rem;
+    }
+    .project-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      color: #2c2c2c;
+      margin-bottom: 0.25rem;
+    }
+    .project-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.88rem;
+      color: #6a6a7a;
+      letter-spacing: 0.08em;
+      line-height: 1.55;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      height: 1.5px;
+      background: #b8d9ee;
+      margin-bottom: 0.7rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #c9a84c;
+      transition: width 0.5s ease;
+    }
+    .project-stats {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #9a9aaa;
+    }
+    .stat-done { color: #c9a84c; }
+
+    /* Active indicator — subtle gold line under kanji */
+    .project-card.is-active .project-kanji::after {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1.5px;
+      background: #c9a84c;
+      margin-top: 0.4rem;
+    }
+
+    /* ── Workspace ── */
+    #workspace {
+      display: none;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(184, 217, 238, 0.7);
+      margin-top: 0.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+    #workspace.is-visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .ws-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .ws-kanji {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 2.6rem;
+      font-weight: 200;
+      color: #1a1a2e;
+      line-height: 1;
+    }
+    .ws-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: #2c2c2c;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 2.8rem;
+      margin-bottom: 2.2rem;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #aaaabc;
+      cursor: pointer;
+      padding: 0 0 0.3rem;
+      border-bottom: 1.5px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn.is-active {
+      color: #c9a84c;
+      border-bottom-color: #c9a84c;
+    }
+    .tab-btn:hover:not(.is-active) { color: #555; }
+
+    .tab-pane { display: none; }
+    .tab-pane.is-active { display: block; }
+
+    /* ── Plan Tab ── */
+    .add-form {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.8rem;
+      align-items: flex-end;
+    }
+    .add-form input {
+      flex: 1;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #b8d9ee;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      padding: 0.45rem 0;
+      color: #2c2c2c;
+      outline: none;
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s;
+    }
+    .add-form input::placeholder { color: #b0b0c0; }
+    .add-form input:focus { border-bottom-color: #c9a84c; }
+
+    .btn {
+      background: none;
+      border: 1px solid #c9a84c;
+      color: #c9a84c;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: #c9a84c; color: #fff; }
+
+    .task-list { list-style: none; }
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(184, 217, 238, 0.35);
+    }
+    .task-item:last-child { border-bottom: none; }
+
+    .task-check {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      border: 1px solid #c9a84c;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .task-check.is-done { background: #c9a84c; }
+    .task-check.is-done::after {
+      content: '✓';
+      color: #fff;
+      font-size: 9px;
+      line-height: 1;
+    }
+    .task-text {
+      flex: 1;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      color: #2c2c2c;
+      transition: color 0.2s;
+      line-height: 1.5;
+    }
+    .task-text.is-done {
+      text-decoration: line-through;
+      color: #b0b0b8;
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      color: #d0d0d8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0 0.2rem;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .btn-icon:hover { color: #c9a84c; }
+
+    .empty-state {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.92rem;
+      color: #b8b8c8;
+      letter-spacing: 0.1em;
+      padding: 0.5rem 0;
+    }
+
+    /* ── Reflect Tab ── */
+    .insight-form { margin-bottom: 2rem; }
+    .insight-form textarea {
+      width: 100%;
+      min-height: 110px;
+      background: rgba(184, 217, 238, 0.15);
+      border: none;
+      border-bottom: 1px solid #b8d9ee;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      line-height: 1.65;
+      padding: 0.75rem 0.5rem;
+      color: #2c2c2c;
+      outline: none;
+      resize: vertical;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s;
+    }
+    .insight-form textarea::placeholder { color: #b0b0c0; }
+    .insight-form textarea:focus { border-bottom-color: #c9a84c; }
+    .insight-form .btn { margin-top: 0.7rem; }
+
+    .insight-list { list-style: none; }
+    .insight-item {
+      padding: 1.1rem 0;
+      border-bottom: 1px solid rgba(184, 217, 238, 0.35);
+      position: relative;
+    }
+    .insight-item:last-child { border-bottom: none; }
+    .insight-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 0.35rem;
+    }
+    .insight-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.97rem;
+      color: #3c3c4c;
+      line-height: 1.68;
+      letter-spacing: 0.03em;
+      padding-right: 1.5rem;
+    }
+    .insight-del {
+      position: absolute;
+      top: 1rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: #d0d0d8;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .insight-del:hover { color: #c9a84c; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      margin-top: 6rem;
+      padding-bottom: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #b0b0c0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 620px) {
+      .projects-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .header-ma { font-size: 4rem; }
+      .app { padding: 2.5rem 1.5rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Irezumi Kumo Cloud Background ══ -->
+  <div id="clouds-bg" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <!-- Ink texture for cloud fills -->
+        <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+          <feColorMatrix type="saturate" values="0"/>
+          <feBlend in="SourceGraphic" mode="multiply" result="blend"/>
+          <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+        </filter>
+      </defs>
+
+      <!-- ── CLOUD A: Top-left sweeping bank ── -->
+      <!-- Shadow / depth layer -->
+      <path d="
+        M 0,185
+        C 0,155 22,100 62,76
+        C 82,60 108,70 124,83
+        C 137,93 143,67 160,46
+        C 175,28 208,14 252,18
+        C 295,22 316,40 334,52
+        C 350,62 366,50 382,37
+        C 398,26 428,36 448,50
+        C 468,64 500,108 528,185
+        L 528,0 L 0,0 Z"
+        fill="#aacde0" stroke="none"/>
+      <!-- Main cloud body -->
+      <path d="
+        M 0,175
+        C 0,145 20,92 58,70
+        C 78,56 106,65 122,78
+        C 134,88 140,60 158,40
+        C 173,22 207,8 250,12
+        C 293,16 314,36 330,48
+        C 346,58 363,45 379,32
+        C 395,20 426,30 446,45
+        C 465,58 498,102 525,175
+        L 525,0 L 0,0 Z"
+        fill="#b8d9ee" stroke="#1c1917" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Inner contour line (irezumi detail) -->
+      <path d="
+        M 18,148
+        C 22,122 38,82 68,64
+        C 86,54 108,62 122,74
+        C 134,84 139,60 155,42
+        C 169,26 200,16 242,20
+        C 282,24 302,40 318,51
+        C 333,60 348,48 363,36
+        C 378,25 406,34 424,48
+        C 441,60 468,98 494,155"
+        fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Second inner contour -->
+      <path d="
+        M 36,128
+        C 42,108 55,76 80,60
+        C 95,50 112,57 124,68
+        C 134,76 139,54 153,38
+        C 165,24 194,14 234,18
+        C 272,22 290,38 306,48
+        C 320,57 333,46 347,35
+        C 360,25 386,33 402,46
+        C 418,57 440,90 462,130"
+        fill="none" stroke="#1c1917" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+      <!-- ── CLOUD B: Top-right corner cluster ── -->
+      <path d="
+        M 1440,0 L 1440,192
+        C 1415,170 1385,155 1355,168
+        C 1340,145 1308,138 1284,158
+        C 1265,132 1228,128 1205,152
+        C 1184,126 1148,124 1126,150
+        C 1108,128 1075,130 1058,158
+        C 1042,138 1015,142 1006,168
+        C 992,150 970,152 962,175
+        L 962,0 Z"
+        fill="#aacde0" stroke="none"/>
+      <path d="
+        M 1440,0 L 1440,180
+        C 1414,158 1384,144 1352,158
+        C 1338,135 1306,128 1281,148
+        C 1262,122 1225,118 1202,142
+        C 1181,116 1145,114 1122,140
+        C 1104,118 1071,120 1053,148
+        C 1037,128 1010,132 1000,158
+        C 986,140 965,142 956,165
+        L 956,0 Z"
+        fill="#b8d9ee" stroke="#1c1917" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Inner contour — top-right -->
+      <path d="
+        M 1420,155
+        C 1400,138 1374,126 1346,140
+        C 1333,118 1302,112 1278,133
+        C 1258,108 1222,104 1200,128
+        C 1178,104 1143,102 1120,127
+        C 1102,106 1070,108 1053,136
+        C 1038,118 1014,122 1005,147"
+        fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- ── CLOUD C: Bottom-left wispy band ── -->
+      <path d="
+        M 0,900 L 0,818
+        C 28,800 62,793 90,810
+        C 106,786 142,778 168,798
+        C 186,774 222,768 248,790
+        C 268,765 308,762 334,786
+        C 352,762 392,760 416,784
+        C 432,762 466,764 482,790
+        L 490,900 Z"
+        fill="#aacde0" stroke="none"/>
+      <path d="
+        M 0,900 L 0,808
+        C 26,790 60,782 88,800
+        C 104,776 140,768 165,788
+        C 183,764 219,757 245,780
+        C 264,754 305,750 330,775
+        C 348,750 389,748 414,773
+        C 429,750 464,752 480,778
+        L 488,900 Z"
+        fill="#b8d9ee" stroke="#1c1917" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Inner contour — bottom-left -->
+      <path d="
+        M 16,850
+        C 38,836 64,828 86,843
+        C 102,820 136,812 160,832
+        C 177,808 212,802 237,824
+        C 255,800 294,796 318,820
+        C 334,796 372,794 396,818
+        C 410,796 442,798 458,822"
+        fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- ── CLOUD D: Bottom-right band ── -->
+      <path d="
+        M 1440,900 L 1440,822
+        C 1410,800 1375,792 1346,812
+        C 1328,786 1292,778 1264,800
+        C 1244,775 1208,770 1182,794
+        C 1162,768 1126,765 1100,790
+        L 1088,900 Z"
+        fill="#aacde0" stroke="none"/>
+      <path d="
+        M 1440,900 L 1440,812
+        C 1408,790 1373,782 1344,802
+        C 1325,776 1289,768 1261,790
+        C 1240,764 1204,760 1178,784
+        C 1157,757 1122,754 1095,780
+        L 1083,900 Z"
+        fill="#b8d9ee" stroke="#1c1917" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Inner contour — bottom-right -->
+      <path d="
+        M 1420,858
+        C 1396,842 1366,834 1338,852
+        C 1320,828 1284,820 1257,842
+        C 1236,818 1200,814 1174,838
+        C 1152,814 1118,812 1092,836"
+        fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- ── CLOUD E: Mid-left small accent ── -->
+      <path d="
+        M 0,420
+        C 18,402 46,396 70,412
+        C 85,388 118,382 142,402
+        C 158,378 192,374 214,396
+        C 230,374 260,376 272,400
+        L 275,500 L 0,500 Z"
+        fill="#c8e4f0" stroke="#1c1917" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="
+        M 12,454
+        C 26,440 50,434 70,448
+        C 84,426 116,420 138,440
+        C 153,418 185,415 207,436
+        C 222,416 250,418 264,440"
+        fill="none" stroke="#1c1917" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- ── CLOUD F: Mid-right small accent ── -->
+      <path d="
+        M 1440,440
+        C 1420,418 1390,410 1362,428
+        C 1344,404 1310,398 1284,418
+        C 1264,394 1230,392 1208,416
+        C 1190,394 1162,396 1148,422
+        L 1145,520 L 1440,520 Z"
+        fill="#c8e4f0" stroke="#1c1917" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="
+        M 1428,484
+        C 1410,468 1382,460 1356,477
+        C 1338,454 1306,448 1280,468
+        C 1260,446 1228,444 1206,468
+        C 1188,448 1162,450 1150,474"
+        fill="none" stroke="#1c1917" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- ══ App ══ -->
+  <div class="app">
+    <header>
+      <div class="header-ma">間</div>
+      <div class="header-title">Interval Tracker</div>
+      <div class="header-sub">meaningful intervals · 意味のある間</div>
+    </header>
+
+    <section class="projects-grid" id="projects-grid"></section>
+    <section id="workspace"></section>
+
+    <footer>間 · 2025</footer>
+  </div>
+
+  <script>
+    'use strict';
+
+    /* ── Project definitions ── */
+    const PROJECTS = [
+      {
+        id: 'geopolitical',
+        kanji: '知',
+        name: 'Geopolitical Lens',
+        desc: "A friend's interpretations of geopolitical & economic events"
+      },
+      {
+        id: 'narrative',
+        kanji: '語',
+        name: 'Narrative Interpreter',
+        desc: 'Long-term personal narrative tracking'
+      }
+    ];
+
+    /* ── State ── */
+    const state = {
+      selected: null,      // project id or null
+      activeTab: {}        // { [projectId]: 'plan' | 'reflect' }
+    };
+
+    /* ── Storage ── */
+    function loadProject(id) {
+      try {
+        return JSON.parse(localStorage.getItem('ma_' + id)) || { tasks: [], insights: [] };
+      } catch (_) {
+        return { tasks: [], insights: [] };
+      }
+    }
+
+    function saveProject(id, data) {
+      localStorage.setItem('ma_' + id, JSON.stringify(data));
+    }
+
+    /* ── Helpers ── */
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString('en-GB', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function stats(id) {
+      const d = loadProject(id);
+      return {
+        planned: d.tasks.length,
+        done: d.tasks.filter(t => t.done).length,
+        insights: d.insights.length
+      };
+    }
+
+    function progress(id) {
+      const s = stats(id);
+      return s.planned === 0 ? 0 : Math.round((s.done / s.planned) * 100);
+    }
+
+    /* ── Render project cards ── */
+    function renderCards() {
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = '';
+
+      PROJECTS.forEach(proj => {
+        const s = stats(proj.id);
+        const pct = progress(proj.id);
+        const active = state.selected === proj.id;
+
+        const card = document.createElement('div');
+        card.className = 'project-card' + (active ? ' is-active' : '');
+        card.innerHTML =
+          '<div class="project-kanji">' + proj.kanji + '</div>' +
+          '<div class="project-name">' + esc(proj.name) + '</div>' +
+          '<div class="project-desc">' + esc(proj.desc) + '</div>' +
+          '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="project-stats">' +
+            s.planned + ' planned\u2002·\u2002' +
+            '<span class="stat-done">' + s.done + ' done</span>' +
+            '\u2002·\u2002' + s.insights + ' insights' +
+          '</div>';
+
+        card.addEventListener('click', () => {
+          if (state.selected === proj.id) {
+            state.selected = null;
+          } else {
+            state.selected = proj.id;
+            if (!state.activeTab[proj.id]) state.activeTab[proj.id] = 'plan';
+          }
+          render();
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* ── Render workspace ── */
+    function renderWorkspace() {
+      const ws = document.getElementById('workspace');
+
+      if (!state.selected) {
+        ws.classList.remove('is-visible');
+        ws.innerHTML = '';
+        return;
+      }
+
+      const proj = PROJECTS.find(p => p.id === state.selected);
+      const tab = state.activeTab[proj.id] || 'plan';
+      const data = loadProject(proj.id);
+
+      const taskRows = data.tasks.length
+        ? data.tasks.map(t =>
+            '<li class="task-item" data-tid="' + t.id + '">' +
+              '<div class="task-check' + (t.done ? ' is-done' : '') + '" data-check="' + t.id + '"></div>' +
+              '<span class="task-text' + (t.done ? ' is-done' : '') + '">' + esc(t.text) + '</span>' +
+              '<button class="btn-icon" data-del-task="' + t.id + '" title="Remove">\u2715</button>' +
+            '</li>'
+          ).join('')
+        : '<li class="empty-state">No tasks yet. Add one above.</li>';
+
+      const insightRows = data.insights.length
+        ? data.insights.slice().reverse().map(ins =>
+            '<li class="insight-item">' +
+              '<button class="insight-del" data-del-ins="' + ins.id + '" title="Remove">\u2715</button>' +
+              '<div class="insight-date">' + esc(formatDate(ins.date)) + '</div>' +
+              '<div class="insight-text">' + esc(ins.text) + '</div>' +
+            '</li>'
+          ).join('')
+        : '<li class="empty-state">No reflections yet.</li>';
+
+      ws.innerHTML =
+        '<div class="ws-header">' +
+          '<span class="ws-kanji">' + proj.kanji + '</span>' +
+          '<span class="ws-name">' + esc(proj.name) + '</span>' +
+        '</div>' +
+        '<div class="tabs">' +
+          '<button class="tab-btn' + (tab === 'plan' ? ' is-active' : '') + '" data-tab="plan">Plan</button>' +
+          '<button class="tab-btn' + (tab === 'reflect' ? ' is-active' : '') + '" data-tab="reflect">Reflect</button>' +
+        '</div>' +
+
+        /* ── Plan pane ── */
+        '<div class="tab-pane' + (tab === 'plan' ? ' is-active' : '') + '" id="pane-plan">' +
+          '<div class="add-form">' +
+            '<input type="text" id="task-input" placeholder="Add a task or milestone\u2026" autocomplete="off" />' +
+            '<button class="btn" id="task-add">Add</button>' +
+          '</div>' +
+          '<ul class="task-list" id="task-list">' + taskRows + '</ul>' +
+        '</div>' +
+
+        /* ── Reflect pane ── */
+        '<div class="tab-pane' + (tab === 'reflect' ? ' is-active' : '') + '" id="pane-reflect">' +
+          '<div class="insight-form">' +
+            '<textarea id="insight-input" placeholder="Record an insight or reflection\u2026"></textarea>' +
+            '<button class="btn" id="insight-add">Save insight</button>' +
+          '</div>' +
+          '<ul class="insight-list" id="insight-list">' + insightRows + '</ul>' +
+        '</div>';
+
+      ws.classList.add('is-visible');
+
+      /* ── Tab switching ── */
+      ws.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.activeTab[proj.id] = btn.dataset.tab;
+          render();
+        });
+      });
+
+      /* ── Plan: add task ── */
+      const taskInput = document.getElementById('task-input');
+      const taskAdd   = document.getElementById('task-add');
+
+      function addTask() {
+        const text = taskInput.value.trim();
+        if (!text) return;
+        const d = loadProject(proj.id);
+        d.tasks.push({ id: uid(), text, done: false, createdAt: new Date().toISOString() });
+        saveProject(proj.id, d);
+        render();
+      }
+
+      taskAdd.addEventListener('click', addTask);
+      taskInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
+      /* ── Plan: toggle done ── */
+      ws.querySelectorAll('[data-check]').forEach(el => {
+        el.addEventListener('click', () => {
+          const d = loadProject(proj.id);
+          const task = d.tasks.find(t => t.id === el.dataset.check);
+          if (task) task.done = !task.done;
+          saveProject(proj.id, d);
+          render();
+        });
+      });
+
+      /* ── Plan: delete task ── */
+      ws.querySelectorAll('[data-del-task]').forEach(el => {
+        el.addEventListener('click', e => {
+          e.stopPropagation();
+          const d = loadProject(proj.id);
+          d.tasks = d.tasks.filter(t => t.id !== el.dataset.delTask);
+          saveProject(proj.id, d);
+          render();
+        });
+      });
+
+      /* ── Reflect: add insight ── */
+      const insightInput = document.getElementById('insight-input');
+      const insightAdd   = document.getElementById('insight-add');
+
+      insightAdd.addEventListener('click', () => {
+        const text = insightInput.value.trim();
+        if (!text) return;
+        const d = loadProject(proj.id);
+        d.insights.push({ id: uid(), text, date: new Date().toISOString() });
+        saveProject(proj.id, d);
+        render();
+      });
+
+      /* ── Reflect: delete insight ── */
+      ws.querySelectorAll('[data-del-ins]').forEach(el => {
+        el.addEventListener('click', () => {
+          const d = loadProject(proj.id);
+          d.insights = d.insights.filter(ins => ins.id !== el.dataset.delIns);
+          saveProject(proj.id, d);
+          render();
+        });
+      });
+    }
+
+    /* ── Main render ── */
+    function render() {
+      renderCards();
+      renderWorkspace();
+    }
+
+    render();
+  </script>
+</body>
+</html>
