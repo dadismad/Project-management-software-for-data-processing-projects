@@ -944,13 +944,17 @@
 
     function starterWorkflow(proj) {
       const createdAt = new Date().toISOString();
-      return proj.starterTasks.map((task, index) => ({
-        id: uid() + index,
+      return proj.starterTasks.map(task => ({
+        id: uid(),
         text: task.text,
         done: false,
         createdAt,
         stage: task.stage
       }));
+    }
+
+    function taskKey(task) {
+      return JSON.stringify([task.stage, String(task.text).trim().toLowerCase()]);
     }
 
     /* ── Render project cards ── */
@@ -1101,9 +1105,9 @@
 
       document.getElementById('starter-add').addEventListener('click', () => {
         const d = loadProject(proj.id);
-        const existingKeys = new Set(d.tasks.map(task => task.stage + '|' + task.text));
+        const existingKeys = new Set(d.tasks.map(taskKey));
         starterWorkflow(proj).forEach(task => {
-          const key = task.stage + '|' + task.text;
+          const key = taskKey(task);
           if (!existingKeys.has(key)) d.tasks.push(task);
         });
         saveProject(proj.id, d);
