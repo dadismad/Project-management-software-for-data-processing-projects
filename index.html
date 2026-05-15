@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>間 · Interval Tracker</title>
+  <title>間 · Interval · Data Project Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet" />
@@ -12,10 +12,21 @@
 
     body {
       font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
-      background: #d6eaf5;
+      background:
+        radial-gradient(circle at top, rgba(255, 248, 220, 0.7), transparent 35%),
+        linear-gradient(180deg, #f4fbff 0%, #e8f5fc 42%, #eef8fb 75%, #fcf7ea 100%);
       min-height: 100vh;
-      color: #2c2c2c;
+      color: #2f3138;
       overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(201, 168, 76, 0.06) 50%, transparent 100%);
+      z-index: 0;
     }
 
     /* ── Cloud Background ── */
@@ -35,7 +46,7 @@
     .app {
       position: relative;
       z-index: 1;
-      max-width: 980px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 3.5rem 2.5rem 4rem;
     }
@@ -43,55 +54,105 @@
     /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 4.5rem;
+      margin-bottom: 2.2rem;
     }
     .header-ma {
       font-family: 'Noto Serif JP', serif;
       font-size: 5rem;
       font-weight: 200;
-      color: #1a1a2e;
+      color: #ac8730;
       line-height: 1;
       letter-spacing: 0.05em;
+      text-shadow: 0 0 24px rgba(232, 213, 163, 0.45);
     }
     .header-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      font-weight: 300;
-      letter-spacing: 0.6em;
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: 0.5em;
       text-transform: uppercase;
-      color: #4a4a5a;
+      color: #5f6470;
       margin-top: 0.7rem;
     }
     .header-sub {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 0.85rem;
-      color: #8a8a9a;
+      font-size: 0.95rem;
+      color: #7d7f8f;
       letter-spacing: 0.2em;
       margin-top: 0.3rem;
+    }
+
+    .intro {
+      margin: 0 auto 3rem;
+      max-width: 760px;
+      text-align: center;
+    }
+    .intro-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      color: #c9a84c;
+      margin-bottom: 0.65rem;
+    }
+    .intro-title {
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: #2f3138;
+      line-height: 1.2;
+    }
+    .intro-copy {
+      margin-top: 0.9rem;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: #616574;
+    }
+    .intro-line {
+      width: 180px;
+      height: 2px;
+      margin: 1.25rem auto 0;
+      background: linear-gradient(90deg, rgba(201, 168, 76, 0), rgba(201, 168, 76, 0.95), rgba(201, 168, 76, 0));
     }
 
     /* ── Project Cards — frameless, open layout ── */
     .projects-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: 2.2rem;
       margin-bottom: 2.5rem;
     }
     .project-card {
       cursor: pointer;
-      padding: 0.25rem 0;
-      transition: opacity 0.25s;
+      padding: 1rem 0.6rem 1.1rem;
+      transition: opacity 0.25s, transform 0.25s;
       user-select: none;
+      position: relative;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12));
     }
-    .project-card:hover { opacity: 0.82; }
+    .project-card::before,
+    .project-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+    .project-card::before {
+      top: 0;
+      background: linear-gradient(90deg, rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.95), rgba(201, 168, 76, 0.12));
+    }
+    .project-card::after {
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(184, 217, 238, 0.25), rgba(184, 217, 238, 0.95), rgba(184, 217, 238, 0.25));
+    }
+    .project-card:hover { opacity: 0.95; transform: translateY(-2px); }
     .project-card.is-active { opacity: 1; }
 
     .project-kanji {
       font-family: 'Noto Serif JP', serif;
       font-size: 3.8rem;
       font-weight: 200;
-      color: #1a1a2e;
+      color: #ac8730;
       line-height: 1;
       margin-bottom: 0.55rem;
     }
@@ -100,38 +161,45 @@
       font-size: 1.35rem;
       font-weight: 400;
       letter-spacing: 0.18em;
-      color: #2c2c2c;
+      color: #2f3138;
       margin-bottom: 0.25rem;
     }
     .project-desc {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 0.88rem;
-      color: #6a6a7a;
+      font-size: 0.94rem;
+      color: #5f6470;
       letter-spacing: 0.08em;
       line-height: 1.55;
-      margin-bottom: 1.2rem;
+      margin-bottom: 0.85rem;
+    }
+    .project-flow {
+      font-size: 0.76rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 1rem;
     }
 
     /* Progress bar */
     .progress-track {
-      height: 1.5px;
-      background: #b8d9ee;
-      margin-bottom: 0.7rem;
+      height: 4px;
+      background: rgba(201, 168, 76, 0.22);
+      margin-bottom: 0.75rem;
       position: relative;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: #c9a84c;
+      background: linear-gradient(90deg, #e8d5a3 0%, #c9a84c 100%);
       transition: width 0.5s ease;
     }
     .project-stats {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 0.78rem;
+      font-size: 0.84rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #9a9aaa;
+      color: #7f8391;
     }
     .stat-done { color: #c9a84c; }
 
@@ -139,8 +207,8 @@
     .project-card.is-active .project-kanji::after {
       content: '';
       display: block;
-      width: 2rem;
-      height: 1.5px;
+      width: 2.6rem;
+      height: 2px;
       background: #c9a84c;
       margin-top: 0.4rem;
     }
@@ -149,9 +217,10 @@
     #workspace {
       display: none;
       padding-top: 2.5rem;
-      border-top: 1px solid rgba(184, 217, 238, 0.7);
+      border-top: 1px solid rgba(201, 168, 76, 0.45);
       margin-top: 0.5rem;
       animation: fadeIn 0.3s ease;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.08));
     }
     #workspace.is-visible { display: block; }
 
@@ -164,13 +233,13 @@
       display: flex;
       align-items: baseline;
       gap: 1.1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.2rem;
     }
     .ws-kanji {
       font-family: 'Noto Serif JP', serif;
       font-size: 2.6rem;
       font-weight: 200;
-      color: #1a1a2e;
+      color: #ac8730;
       line-height: 1;
     }
     .ws-name {
@@ -178,14 +247,71 @@
       font-size: 1.5rem;
       font-weight: 300;
       letter-spacing: 0.22em;
-      color: #2c2c2c;
+      color: #2f3138;
+    }
+    .ws-summary {
+      margin-bottom: 1.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.28);
+    }
+    .ws-summary-copy {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #5f6470;
+    }
+    .ws-guide-label {
+      margin-bottom: 0.8rem;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.32em;
+      color: #c9a84c;
+    }
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .guide-step {
+      display: flex;
+      gap: 0.8rem;
+      padding: 0.95rem 0.85rem;
+      border-top: 2px solid rgba(184, 217, 238, 0.75);
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .guide-step.is-recommended {
+      border-top-color: #c9a84c;
+      background: rgba(255, 250, 239, 0.72);
+    }
+    .guide-step-number {
+      flex-shrink: 0;
+      width: 1.7rem;
+      height: 1.7rem;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.65);
+      color: #ac8730;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+    .guide-step-title {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      color: #2f3138;
+    }
+    .guide-step-copy {
+      margin-top: 0.25rem;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #616574;
     }
 
     /* Tabs */
     .tabs {
       display: flex;
       gap: 2.8rem;
-      margin-bottom: 2.2rem;
+      margin-bottom: 1.4rem;
     }
     .tab-btn {
       background: none;
@@ -194,7 +320,7 @@
       font-size: 0.95rem;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: #aaaabc;
+      color: #9398a5;
       cursor: pointer;
       padding: 0 0 0.3rem;
       border-bottom: 1.5px solid transparent;
@@ -208,6 +334,40 @@
 
     .tab-pane { display: none; }
     .tab-pane.is-active { display: block; }
+    .guide-banner {
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+      background: rgba(255, 250, 239, 0.9);
+      border-left: 3px solid #c9a84c;
+      color: #5f6470;
+      line-height: 1.5;
+    }
+    .stage-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+    .stage-btn {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(201, 168, 76, 0.45);
+      color: #7d7f8f;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .stage-btn.is-active,
+    .stage-btn:hover {
+      background: rgba(255, 250, 239, 0.95);
+      border-color: #c9a84c;
+      color: #ac8730;
+    }
+    .starter-row {
+      margin-bottom: 1rem;
+    }
 
     /* ── Plan Tab ── */
     .add-form {
@@ -218,24 +378,26 @@
     }
     .add-form input {
       flex: 1;
-      background: none;
-      border: none;
-      border-bottom: 1px solid #b8d9ee;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(201, 168, 76, 0.3);
       font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
-      padding: 0.45rem 0;
-      color: #2c2c2c;
+      padding: 0.7rem 0.85rem;
+      color: #2f3138;
       outline: none;
       letter-spacing: 0.05em;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .add-form input::placeholder { color: #b0b0c0; }
-    .add-form input:focus { border-bottom-color: #c9a84c; }
+    .add-form input:focus {
+      border-color: #c9a84c;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.14);
+    }
 
     .btn {
-      background: none;
+      background: linear-gradient(135deg, #d9bb6b 0%, #c9a84c 100%);
       border: 1px solid #c9a84c;
-      color: #c9a84c;
+      color: #fffdf7;
       font-family: 'Cormorant Garamond', serif;
       font-size: 0.88rem;
       letter-spacing: 0.25em;
@@ -245,15 +407,19 @@
       transition: background 0.2s, color 0.2s;
       white-space: nowrap;
     }
-    .btn:hover { background: #c9a84c; color: #fff; }
+    .btn:hover { background: linear-gradient(135deg, #e3c676 0%, #c9a84c 100%); color: #fff; }
+    .btn.btn-secondary {
+      background: rgba(255, 255, 255, 0.88);
+      color: #ac8730;
+    }
 
     .task-list { list-style: none; }
     .task-item {
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      padding: 0.65rem 0;
-      border-bottom: 1px solid rgba(184, 217, 238, 0.35);
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.18);
     }
     .task-item:last-child { border-bottom: none; }
 
@@ -280,7 +446,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
       letter-spacing: 0.04em;
-      color: #2c2c2c;
+      color: #2f3138;
       transition: color 0.2s;
       line-height: 1.5;
     }
@@ -299,12 +465,24 @@
       line-height: 1;
     }
     .btn-icon:hover { color: #c9a84c; }
+    .task-stage {
+      flex-shrink: 0;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #fffdf7;
+    }
+    .task-stage--collect { background: #87b8d3; }
+    .task-stage--process { background: #5c96b7; }
+    .task-stage--interpret { background: #c9a84c; }
 
     .empty-state {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 0.92rem;
-      color: #b8b8c8;
+      color: #8d93a1;
       letter-spacing: 0.1em;
       padding: 0.5rem 0;
     }
@@ -314,21 +492,23 @@
     .insight-form textarea {
       width: 100%;
       min-height: 110px;
-      background: rgba(184, 217, 238, 0.15);
-      border: none;
-      border-bottom: 1px solid #b8d9ee;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(201, 168, 76, 0.3);
       font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
       line-height: 1.65;
-      padding: 0.75rem 0.5rem;
-      color: #2c2c2c;
+      padding: 0.85rem;
+      color: #2f3138;
       outline: none;
       resize: vertical;
       letter-spacing: 0.04em;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .insight-form textarea::placeholder { color: #b0b0c0; }
-    .insight-form textarea:focus { border-bottom-color: #c9a84c; }
+    .insight-form textarea:focus {
+      border-color: #c9a84c;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.14);
+    }
     .insight-form .btn { margin-top: 0.7rem; }
 
     .insight-list { list-style: none; }
@@ -377,7 +557,7 @@
       font-size: 0.78rem;
       letter-spacing: 0.4em;
       text-transform: uppercase;
-      color: #b0b0c0;
+      color: #b99742;
     }
 
     /* ── Responsive ── */
@@ -385,6 +565,11 @@
       .projects-grid { grid-template-columns: 1fr; gap: 3rem; }
       .header-ma { font-size: 4rem; }
       .app { padding: 2.5rem 1.5rem 3rem; }
+      .intro-title { font-size: 1.8rem; }
+      .guide-steps { grid-template-columns: 1fr; }
+      .ws-header { flex-direction: column; gap: 0.5rem; }
+      .tabs { gap: 1.2rem; }
+      .add-form { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -587,18 +772,49 @@
   <div class="app">
     <header>
       <div class="header-ma">間</div>
-      <div class="header-title">Interval Tracker</div>
-      <div class="header-sub">meaningful intervals · 意味のある間</div>
+      <div class="header-title">Interval · Data Project Guide</div>
+      <div class="header-sub">gather data · process it · interpret it</div>
     </header>
+
+    <section class="intro" aria-label="Simple workflow overview">
+      <div class="intro-label">Guided for non-technical project work</div>
+      <div class="intro-title">A calmer way to move from idea to review.</div>
+      <p class="intro-copy">Choose a project, follow the same simple path each time, and let the app suggest the next step for data aggregation, processing, and interpretation. No setup, no methodology knowledge, no extra configuration.</p>
+      <div class="intro-line" aria-hidden="true"></div>
+    </section>
 
     <section class="projects-grid" id="projects-grid"></section>
     <section id="workspace"></section>
 
-    <footer>間 · 2025</footer>
+    <footer>間 · <span id="footer-year"></span> · gather · process · interpret</footer>
   </div>
 
   <script>
     'use strict';
+
+    const STAGES = [
+      {
+        id: 'collect',
+        label: 'Gather data',
+        shortLabel: 'Gather',
+        hint: 'Bring in articles, files, notes, or source material.',
+        placeholder: 'What data or source should you collect next?'
+      },
+      {
+        id: 'process',
+        label: 'Process it',
+        shortLabel: 'Process',
+        hint: 'Clean, sort, compare, or structure what you gathered.',
+        placeholder: 'What processing or checking step should happen next?'
+      },
+      {
+        id: 'interpret',
+        label: 'Interpret it',
+        shortLabel: 'Interpret',
+        hint: 'Capture what the pattern means or what decision it supports.',
+        placeholder: 'What interpretation or conclusion should you write next?'
+      }
+    ];
 
     /* ── Project definitions ── */
     const PROJECTS = [
@@ -606,33 +822,70 @@
         id: 'geopolitical',
         kanji: '知',
         name: 'Geopolitical Lens',
-        desc: "A friend's interpretations of geopolitical & economic events"
+        desc: "Collect signals, process notes, and record what the data suggests about geopolitical and economic events.",
+        summary: 'Use this stream when your project turns scattered world and market signals into a clearer reading.',
+        starterTasks: [
+          { stage: 'collect', text: 'Gather this week’s geopolitical headlines, economic releases, and source links' },
+          { stage: 'process', text: 'Group the collected signals by region, market, and recurring theme' },
+          { stage: 'interpret', text: 'Write the first short interpretation of what the patterns may mean' }
+        ]
       },
       {
         id: 'narrative',
         kanji: '語',
         name: 'Narrative Interpreter',
-        desc: 'Long-term personal narrative tracking'
+        desc: 'Gather narrative material, process recurring patterns, and keep a clear interpretation trail over time.',
+        summary: 'Use this stream when your project is about collecting story fragments and turning them into meaning.',
+        starterTasks: [
+          { stage: 'collect', text: 'Gather the latest notes, events, and observations that belong in the narrative' },
+          { stage: 'process', text: 'Sort the material into repeating themes, timelines, or contrasts' },
+          { stage: 'interpret', text: 'Record the strongest interpretation or lesson emerging from the pattern' }
+        ]
       }
     ];
+    const DEFAULT_STAGE = 'collect';
+
+    const STAGE_MAP = STAGES.reduce((map, stage) => {
+      map[stage.id] = stage;
+      return map;
+    }, {});
 
     /* ── State ── */
     const state = {
       selected: null,      // project id or null
-      activeTab: {}        // { [projectId]: 'plan' | 'reflect' }
+      activeTab: {},       // { [projectId]: 'plan' | 'reflect' }
+      activeStage: {}      // { [projectId]: 'collect' | 'process' | 'interpret' }
     };
 
     /* ── Storage ── */
+    function normalizeTask(task) {
+      return {
+        id: task && task.id ? task.id : uid(),
+        text: task && typeof task.text === 'string' ? task.text : '',
+        done: Boolean(task && task.done),
+        createdAt: task && task.createdAt ? task.createdAt : new Date().toISOString(),
+        stage: task && STAGE_MAP[task.stage] ? task.stage : DEFAULT_STAGE
+      };
+    }
+
+    function normalizeProjectData(data) {
+      const safeData = data && typeof data === 'object' ? data : {};
+      return {
+        tasks: Array.isArray(safeData.tasks) ? safeData.tasks.map(normalizeTask).filter(task => task.text.trim()) : [],
+        insights: Array.isArray(safeData.insights) ? safeData.insights.filter(insight => insight && typeof insight.text === 'string' && insight.text.trim()) : []
+      };
+    }
+
     function loadProject(id) {
       try {
-        return JSON.parse(localStorage.getItem('ma_' + id)) || { tasks: [], insights: [] };
+        return normalizeProjectData(JSON.parse(localStorage.getItem('ma_' + id)));
       } catch (_) {
         return { tasks: [], insights: [] };
       }
     }
 
     function saveProject(id, data) {
-      localStorage.setItem('ma_' + id, JSON.stringify(data));
+      localStorage.setItem('ma_' + id, JSON.stringify(normalizeProjectData(data)));
     }
 
     /* ── Helpers ── */
@@ -655,6 +908,10 @@
         .replace(/'/g, '&#39;');
     }
 
+    function stageInfo(stageId) {
+      return STAGE_MAP[stageId] || STAGE_MAP[DEFAULT_STAGE];
+    }
+
     function stats(id) {
       const d = loadProject(id);
       return {
@@ -667,6 +924,39 @@
     function progress(id) {
       const s = stats(id);
       return s.planned === 0 ? 0 : Math.round((s.done / s.planned) * 100);
+    }
+
+    function nextStage(id) {
+      const tasks = loadProject(id).tasks;
+      const hasOpen = stageId => tasks.some(task => task.stage === stageId && !task.done);
+      const hasAny = stageId => tasks.some(task => task.stage === stageId);
+
+      if (!hasAny('collect') || hasOpen('collect')) return 'collect';
+      if (!hasAny('process') || hasOpen('process')) return 'process';
+      return 'interpret';
+    }
+
+    function ensureActiveStage(id) {
+      if (!STAGE_MAP[state.activeStage[id]]) {
+        state.activeStage[id] = nextStage(id);
+      }
+      return state.activeStage[id];
+    }
+
+    function starterWorkflow(proj) {
+      const createdAt = new Date().toISOString();
+      return proj.starterTasks.map(task => ({
+        id: uid(),
+        text: task.text,
+        done: false,
+        createdAt,
+        stage: task.stage
+      }));
+    }
+
+    function taskKey(task) {
+      if (!task) return JSON.stringify([DEFAULT_STAGE, '']);
+      return JSON.stringify([task.stage, String(task.text).trim().toLowerCase()]);
     }
 
     /* ── Render project cards ── */
@@ -685,6 +975,7 @@
           '<div class="project-kanji">' + proj.kanji + '</div>' +
           '<div class="project-name">' + esc(proj.name) + '</div>' +
           '<div class="project-desc">' + esc(proj.desc) + '</div>' +
+          '<div class="project-flow">Gather · Process · Interpret</div>' +
           '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
           '<div class="project-stats">' +
             s.planned + ' planned\u2002·\u2002' +
@@ -698,6 +989,7 @@
           } else {
             state.selected = proj.id;
             if (!state.activeTab[proj.id]) state.activeTab[proj.id] = 'plan';
+            ensureActiveStage(proj.id);
           }
           render();
         });
@@ -719,16 +1011,20 @@
       const proj = PROJECTS.find(p => p.id === state.selected);
       const tab = state.activeTab[proj.id] || 'plan';
       const data = loadProject(proj.id);
+      const recommendedStageId = nextStage(proj.id);
+      const activeStageId = ensureActiveStage(proj.id);
+      const activeStage = stageInfo(activeStageId);
 
       const taskRows = data.tasks.length
         ? data.tasks.map(t =>
             '<li class="task-item" data-tid="' + t.id + '">' +
               '<div class="task-check' + (t.done ? ' is-done' : '') + '" data-check="' + t.id + '"></div>' +
+              '<span class="task-stage task-stage--' + stageInfo(t.stage).id + '">' + esc(stageInfo(t.stage).shortLabel) + '</span>' +
               '<span class="task-text' + (t.done ? ' is-done' : '') + '">' + esc(t.text) + '</span>' +
               '<button class="btn-icon" data-del-task="' + t.id + '" title="Remove">\u2715</button>' +
             '</li>'
           ).join('')
-        : '<li class="empty-state">No tasks yet. Add one above.</li>';
+        : '<li class="empty-state">No steps yet. Use the ready-made workflow or add the recommended next step.</li>';
 
       const insightRows = data.insights.length
         ? data.insights.slice().reverse().map(ins =>
@@ -738,22 +1034,46 @@
               '<div class="insight-text">' + esc(ins.text) + '</div>' +
             '</li>'
           ).join('')
-        : '<li class="empty-state">No reflections yet.</li>';
+        : '<li class="empty-state">No review notes yet. Add a short takeaway when you learn something useful.</li>';
 
       ws.innerHTML =
         '<div class="ws-header">' +
           '<span class="ws-kanji">' + proj.kanji + '</span>' +
           '<span class="ws-name">' + esc(proj.name) + '</span>' +
         '</div>' +
+        '<div class="ws-summary">' +
+          '<div class="ws-summary-copy">' + esc(proj.summary) + '</div>' +
+        '</div>' +
+        '<div class="ws-guide-label">Simple path</div>' +
+        '<div class="guide-steps">' +
+          STAGES.map((stage, index) =>
+            '<div class="guide-step' + (stage.id === recommendedStageId ? ' is-recommended' : '') + '">' +
+              '<div class="guide-step-number">' + (index + 1) + '</div>' +
+              '<div>' +
+                '<div class="guide-step-title">' + esc(stage.label) + '</div>' +
+                '<div class="guide-step-copy">' + esc(stage.hint) + '</div>' +
+              '</div>' +
+            '</div>'
+          ).join('') +
+        '</div>' +
         '<div class="tabs">' +
-          '<button class="tab-btn' + (tab === 'plan' ? ' is-active' : '') + '" data-tab="plan">Plan</button>' +
-          '<button class="tab-btn' + (tab === 'reflect' ? ' is-active' : '') + '" data-tab="reflect">Reflect</button>' +
+          '<button class="tab-btn' + (tab === 'plan' ? ' is-active' : '') + '" data-tab="plan">Guided steps</button>' +
+          '<button class="tab-btn' + (tab === 'reflect' ? ' is-active' : '') + '" data-tab="reflect">Review</button>' +
         '</div>' +
 
         /* ── Plan pane ── */
         '<div class="tab-pane' + (tab === 'plan' ? ' is-active' : '') + '" id="pane-plan">' +
+          '<div class="guide-banner">Recommended next move: <strong>' + esc(stageInfo(recommendedStageId).label) + '</strong> — ' + esc(stageInfo(recommendedStageId).hint) + '</div>' +
+          '<div class="stage-picker">' +
+            STAGES.map(stage =>
+              '<button class="stage-btn' + (stage.id === activeStageId ? ' is-active' : '') + '" data-stage="' + stage.id + '">' + esc(stage.label) + '</button>'
+            ).join('') +
+          '</div>' +
+          '<div class="starter-row">' +
+            '<button class="btn btn-secondary" id="starter-add">Use ready-made workflow</button>' +
+          '</div>' +
           '<div class="add-form">' +
-            '<input type="text" id="task-input" placeholder="Add a task or milestone\u2026" autocomplete="off" />' +
+            '<input type="text" id="task-input" placeholder="' + esc(activeStage.placeholder) + '" autocomplete="off" />' +
             '<button class="btn" id="task-add">Add</button>' +
           '</div>' +
           '<ul class="task-list" id="task-list">' + taskRows + '</ul>' +
@@ -762,8 +1082,8 @@
         /* ── Reflect pane ── */
         '<div class="tab-pane' + (tab === 'reflect' ? ' is-active' : '') + '" id="pane-reflect">' +
           '<div class="insight-form">' +
-            '<textarea id="insight-input" placeholder="Record an insight or reflection\u2026"></textarea>' +
-            '<button class="btn" id="insight-add">Save insight</button>' +
+            '<textarea id="insight-input" placeholder="What did the data show, and what should happen next?"></textarea>' +
+            '<button class="btn" id="insight-add">Save review note</button>' +
           '</div>' +
           '<ul class="insight-list" id="insight-list">' + insightRows + '</ul>' +
         '</div>';
@@ -778,6 +1098,25 @@
         });
       });
 
+      ws.querySelectorAll('[data-stage]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.activeStage[proj.id] = btn.dataset.stage;
+          render();
+        });
+      });
+
+      document.getElementById('starter-add').addEventListener('click', () => {
+        const d = loadProject(proj.id);
+        const existingKeys = new Set(d.tasks.map(taskKey));
+        starterWorkflow(proj).forEach(task => {
+          const key = taskKey(task);
+          if (!existingKeys.has(key)) d.tasks.push(task);
+        });
+        saveProject(proj.id, d);
+        state.activeStage[proj.id] = nextStage(proj.id);
+        render();
+      });
+
       /* ── Plan: add task ── */
       const taskInput = document.getElementById('task-input');
       const taskAdd   = document.getElementById('task-add');
@@ -786,8 +1125,9 @@
         const text = taskInput.value.trim();
         if (!text) return;
         const d = loadProject(proj.id);
-        d.tasks.push({ id: uid(), text, done: false, createdAt: new Date().toISOString() });
+        d.tasks.push({ id: uid(), text, done: false, createdAt: new Date().toISOString(), stage: activeStageId });
         saveProject(proj.id, d);
+        state.activeStage[proj.id] = nextStage(proj.id);
         render();
       }
 
@@ -801,6 +1141,7 @@
           const task = d.tasks.find(t => t.id === el.dataset.check);
           if (task) task.done = !task.done;
           saveProject(proj.id, d);
+          state.activeStage[proj.id] = nextStage(proj.id);
           render();
         });
       });
@@ -812,6 +1153,7 @@
           const d = loadProject(proj.id);
           d.tasks = d.tasks.filter(t => t.id !== el.dataset.delTask);
           saveProject(proj.id, d);
+          state.activeStage[proj.id] = nextStage(proj.id);
           render();
         });
       });
@@ -844,6 +1186,7 @@
     function render() {
       renderCards();
       renderWorkspace();
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
     }
 
     render();
