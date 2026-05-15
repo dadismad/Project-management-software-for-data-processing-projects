@@ -955,6 +955,7 @@
     }
 
     function taskKey(task) {
+      if (!task) return JSON.stringify([DEFAULT_STAGE, '']);
       return JSON.stringify([task.stage, String(task.text).trim().toLowerCase()]);
     }
 
